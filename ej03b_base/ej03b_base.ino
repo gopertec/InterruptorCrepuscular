@@ -77,12 +77,12 @@ void setup(void)
     APAGAR_LED_TEST;
     }
 
-void LedTest(void)
+void LedTest(void)  //Matias y Enrique
     {
 
     }
 
-void CtrlAutomaticoReflector(void)
+void CtrlAutomaticoReflector(void) //Ezequiel
     {
 
     }
