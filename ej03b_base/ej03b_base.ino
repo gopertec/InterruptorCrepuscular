@@ -85,7 +85,7 @@ void LedTest(void)  //Matias y Enrique
   static int ledEstadoTest = LOW;
 
   if(millis() - millis_ini < intervalo) return;
-  millis_ini1 = millis();
+  millis_ini = millis();
 
   ledEstadoTest = !ledEstadoTest;
 
@@ -117,10 +117,10 @@ void CtrlAutomaticoReflector(void) //Ezequiel
 
       }
     }
-} 
+}
 
 
-    
+
 
 void loop(void)
     {
