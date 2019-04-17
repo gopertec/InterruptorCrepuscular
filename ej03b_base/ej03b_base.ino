@@ -16,7 +16,12 @@ Primer proyecto en GitHub
 
 prueba por Ezequiel Errecalde
 
+<<<<<<< HEAD
+prueba por Enrique Sabetta
+prueba por Matias Draeger
+=======
 
+>>>>>>> b61aac780d16e6e3cdc6243ac9ddde6a5d7d24f9
 --------------------------------------------------
 Objetivo:
 INTERRUPTOR CREPUSCULAR CON SENSOR DE PRESENCIA
