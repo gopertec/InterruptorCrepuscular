@@ -14,6 +14,8 @@ Ejercicio Nro. 3
 
 Primer proyecto en GitHub
 
+prueba por Ezequiel Errecalde
+
 --------------------------------------------------
 Objetivo:
 INTERRUPTOR CREPUSCULAR CON SENSOR DE PRESENCIA
