@@ -102,7 +102,7 @@ void LedTest(void)  //Matias y Enrique
 void CtrlAutomaticoReflector(void) //Ezequiel
     {
 
- static bool reflector=0;
+ 
  static unsigned long millis_inicial = 0;
 
   if (!ESTA_OSCURO)return;
