@@ -43,97 +43,117 @@ NIVEL 2:
 Se debe apagar de manera temporizada únicamente si se encendió de manera automática.
 */
 
-#define PIN_SW1									8
-#define PIN_DETECTA_OSCURIDAD					PIN_SW1
-#define CONFIGURAR_DETECTA_OSCURIDAD			pinMode(PIN_DETECTA_OSCURIDAD, INPUT)
-#define ESTA_OSCURO								(digitalRead(PIN_DETECTA_OSCURIDAD)==HIGH)
+#define PIN_BOTON                               7
+#define CONFIGURAR_BOTON                        pinMode(PIN_BOTON, INPUT)
+#define BOTON_PRESIONADO                        (digitalRead(PIN_BOTON)==HIGH)
 
-#define PIN_DETECTA_PRESENCIA					9
-#define CONFIGURAR_DETECTA_PRESENCIA			pinMode(PIN_DETECTA_PRESENCIA, INPUT)
-#define DETECTA_PRESENCIA						(digitalRead(PIN_DETECTA_PRESENCIA)==HIGH)
+#define PIN_DETECTA_OSCURIDAD                   8
+#define CONFIGURAR_DETECTA_OSCURIDAD            pinMode(PIN_DETECTA_OSCURIDAD, INPUT)
+#define ESTA_OSCURO                             (digitalRead(PIN_DETECTA_OSCURIDAD)==HIGH)
 
-#define PIN_REFLECTOR							3
-#define CONFIGURAR_REFLECTOR					pinMode(PIN_REFLECTOR, OUTPUT)
-#define APAGAR_REFLECTOR						digitalWrite(PIN_REFLECTOR, LOW)
-#define ENCENDER_REFLECTOR						digitalWrite(PIN_REFLECTOR, HIGH)
+#define PIN_DETECTA_PRESENCIA                   9
+#define CONFIGURAR_DETECTA_PRESENCIA            pinMode(PIN_DETECTA_PRESENCIA, INPUT)
+#define DETECTA_PRESENCIA                       (digitalRead(PIN_DETECTA_PRESENCIA)==HIGH)
 
-#define PIN_LED_TEST							10
-#define CONFIGURAR_LED_TEST						pinMode(PIN_LED_TEST, OUTPUT)
-#define APAGAR_LED_TEST							digitalWrite(PIN_LED_TEST, LOW)
-#define ENCENDER_LED_TEST						digitalWrite(PIN_LED_TEST, HIGH)
+#define PIN_REFLECTOR                           3
+#define CONFIGURAR_REFLECTOR                    pinMode(PIN_REFLECTOR, OUTPUT)
+#define APAGAR_REFLECTOR                        digitalWrite(PIN_REFLECTOR, LOW)
+#define ENCENDER_REFLECTOR                      digitalWrite(PIN_REFLECTOR, HIGH)
 
-#define MS_REFLECTOR_ENCENDIDO					2000
+#define PIN_LED_TEST                            10
+#define CONFIGURAR_LED_TEST                     pinMode(PIN_LED_TEST, OUTPUT)
+#define APAGAR_LED_TEST                         digitalWrite(PIN_LED_TEST, LOW)
+#define ENCENDER_LED_TEST                       digitalWrite(PIN_LED_TEST, HIGH)
 
-#define ON 										1
-#define OFF 									0
+#define MS_REFLECTOR_ENCENDIDO                  2000
+
+#define ON                                      1
+#define OFF                                     0
 
 unsigned char pulsos = 1;
 unsigned long millis_pulso = 200, millis_off = 1000;
 
-bool reflector=0;
+bool reflector = 0;
 
 void setup(void)
-    {
-    CONFIGURAR_DETECTA_OSCURIDAD;
-    CONFIGURAR_DETECTA_PRESENCIA;
-    CONFIGURAR_REFLECTOR;
-    CONFIGURAR_LED_TEST;
+	{
+	CONFIGURAR_DETECTA_OSCURIDAD;
+	CONFIGURAR_DETECTA_PRESENCIA;
+	CONFIGURAR_REFLECTOR;
+	CONFIGURAR_LED_TEST;
 
-    APAGAR_REFLECTOR;
-    APAGAR_LED_TEST;
-    }
+	APAGAR_REFLECTOR;
+	APAGAR_LED_TEST;
+	}
 
 void LedTest(void)  //Matias y Enrique
-    {
-  static unsigned long millis_ini = 0;
-  const unsigned long intervalo = 500;
-  static int ledEstadoTest = LOW;
+	{
+	static unsigned long millis_ini = 0;
+	const unsigned long intervalo = 500;
+	static int ledEstadoTest = LOW;
 
-  if(millis() - millis_ini < intervalo) return;
-  millis_ini = millis();
+	if (millis() - millis_ini < intervalo) return;
+	millis_ini = millis();
 
-  ledEstadoTest = !ledEstadoTest;
+	ledEstadoTest = !ledEstadoTest;
 
-  if (ledEstadoTest)  ENCENDER_LED_TEST;
-  else        APAGAR_LED_TEST;
+	if (ledEstadoTest)  ENCENDER_LED_TEST;
+	else        APAGAR_LED_TEST;
 
-    }
+	}
 
 void CtrlAutomaticoReflector(void) //Ezequiel
-    {
-
- 
- static unsigned long millis_inicial = 0;
-
-  if (!ESTA_OSCURO)return;
-  if (DETECTA_PRESENCIA)
-    {
-      millis_inicial = millis();
-      ENCENDER_REFLECTOR;
-      reflector = 1;
-
-    }
-  if (reflector)
-    {
-      if (millis() - millis_inicial > MS_REFLECTOR_ENCENDIDO)
-      {
-        APAGAR_REFLECTOR;
-        reflector = 0;
-
-      }
-    }
-}
+	{
 
 
+	static unsigned long millis_inicial = 0;
 
+	if (!ESTA_OSCURO)return;
+	if (DETECTA_PRESENCIA)
+		{
+		millis_inicial = millis();
+		ENCENDER_REFLECTOR;
+		reflector = 1;
+
+		}
+	if (reflector)
+		{
+		if (millis() - millis_inicial > MS_REFLECTOR_ENCENDIDO)
+			{
+			APAGAR_REFLECTOR;
+			reflector = 0;
+
+			}
+		}
+	}
+
+void ContadorDeEncendido(void)
+	{
+
+	}
+
+void RegistroAcumuladoDeMarcha(void)
+	{
+
+	}
+
+bool SePresionoBoton(void)
+	{
+    return(false);
+	}
+
+void InvertirEstadoReflector(void)
+	{
+
+	}
 
 void loop(void)
-    {
-    LedTest();
-    CtrlAutomaticoReflector();  //
-    
-    ContadorDeEncendido();  //Contar la cantidad de veces que se enciende
-    RegistroAcumuladoDeMarcha();
-    if(SePresionoBoton()) 
-        InvertirEstadoReflector();
-    }
+	{
+	LedTest();
+	CtrlAutomaticoReflector();  //
+
+	ContadorDeEncendido();  //Contar la cantidad de veces que se enciende
+	RegistroAcumuladoDeMarcha();
+	if (SePresionoBoton())
+		InvertirEstadoReflector();
+	}
