@@ -78,12 +78,23 @@ void setup(void)
     APAGAR_LED_TEST;
     }
 
-void LedTest(void)
+void LedTest(void)  //Matias y Enrique
     {
+  static unsigned long millis_ini = 0;
+  const unsigned long intervalo = 500;
+  static int ledEstadoTest = LOW;
+
+  if(millis() - millis_ini < intervalo) return;
+  millis_ini1 = millis();
+
+  ledEstadoTest = !ledEstadoTest;
+
+  if (ledEstadoTest)  ENCENDER_LED_TEST;
+  else        APAGAR_LED_TEST;
 
     }
 
-void CtrlAutomaticoReflector(void)
+void CtrlAutomaticoReflector(void) //Ezequiel
     {
 
  static bool reflector=0;
