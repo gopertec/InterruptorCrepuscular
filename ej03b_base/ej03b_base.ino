@@ -81,6 +81,17 @@ void setup(void)
 
 void LedTest(void)
     {
+  static unsigned long millis_ini = 0;
+  const unsigned long intervalo = 500;
+  static int ledEstadoTest = LOW;
+
+  if(millis() - millis_ini < intervalo) return;
+  millis_ini1 = millis();
+
+  ledEstadoTest = !ledEstadoTest;
+
+  if (ledEstadoTest)  ENCENDER_LED_TEST;
+  else        APAGAR_LED_TEST;
 
     }
 
