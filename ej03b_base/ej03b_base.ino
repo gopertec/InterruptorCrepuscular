@@ -14,10 +14,14 @@ Ejercicio Nro. 3
 
 Primer proyecto en GitHub
 
-prueba por Nacho Maldonado
+prueba por Ezequiel Errecalde
 
+<<<<<<< HEAD
 prueba por Enrique Sabetta
 prueba por Matias Draeger
+=======
+
+>>>>>>> b61aac780d16e6e3cdc6243ac9ddde6a5d7d24f9
 --------------------------------------------------
 Objetivo:
 INTERRUPTOR CREPUSCULAR CON SENSOR DE PRESENCIA
@@ -79,15 +83,49 @@ void setup(void)
     APAGAR_LED_TEST;
     }
 
-void LedTest(void)
+void LedTest(void)  //Matias y Enrique
     {
+  static unsigned long millis_ini = 0;
+  const unsigned long intervalo = 500;
+  static int ledEstadoTest = LOW;
+
+  if(millis() - millis_ini < intervalo) return;
+  millis_ini1 = millis();
+
+  ledEstadoTest = !ledEstadoTest;
+
+  if (ledEstadoTest)  ENCENDER_LED_TEST;
+  else        APAGAR_LED_TEST;
 
     }
 
-void CtrlAutomaticoReflector(void)
+void CtrlAutomaticoReflector(void) //Ezequiel
     {
 
+ static bool reflector=0;
+ static unsigned long millis_inicial = 0;
+
+  if (!ESTA_OSCURO)return;
+  if (DETECTA_PRESENCIA)
+    {
+      millis_inicial = millis();
+      ENCENDER_REFLECTOR;
+      reflector = 1;
+
     }
+  if (reflector)
+    {
+      if (millis() - millis_inicial > MS_REFLECTOR_ENCENDIDO)
+      {
+        APAGAR_REFLECTOR;
+        reflector = 0;
+
+      }
+    }
+} 
+
+
+    
 
 void loop(void)
     {
