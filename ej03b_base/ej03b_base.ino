@@ -79,7 +79,7 @@ void setup(void)
     APAGAR_LED_TEST;
     }
 
-void LedTest(void)
+void LedTest(void)  //Matias y Enrique
     {
   static unsigned long millis_ini = 0;
   const unsigned long intervalo = 500;
@@ -95,7 +95,7 @@ void LedTest(void)
 
     }
 
-void CtrlAutomaticoReflector(void)
+void CtrlAutomaticoReflector(void) //Ezequiel
     {
 
     }
