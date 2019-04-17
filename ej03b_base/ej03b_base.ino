@@ -14,7 +14,7 @@ Ejercicio Nro. 3
 
 Primer proyecto en GitHub
 
-prueba por Ezequiel Errecalde
+prueba por Nacho Maldonado
 
 --------------------------------------------------
 Objetivo:
