@@ -131,4 +131,8 @@ void loop(void)
     {
     LedTest();
     CtrlAutomaticoReflector();
+    //Contar la cantidad de veces que se enciende
+    //Nivel  2
+    if(SePresinaBoton()) 
+        InvertirEstadoReflector();
     }
