@@ -130,9 +130,9 @@ void CtrlAutomaticoReflector(void) //Ezequiel
 void loop(void)
     {
     LedTest();
-    CtrlAutomaticoReflector();
+    CtrlAutomaticoReflector();  //
     //Contar la cantidad de veces que se enciende
     //Nivel  2
-    if(SePresinaBoton()) 
+    if(SePresionoBoton()) 
         InvertirEstadoReflector();
     }
