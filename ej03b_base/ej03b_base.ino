@@ -139,7 +139,15 @@ void RegistroAcumuladoDeMarcha(void)
 
 bool SePresionoBoton(void)
 	{
-    return(false);
+	static bool estado_anterior = digitalRead(PIN_BOTON);
+  	bool estado_boton = digitalRead(PIN_BOTON);
+  	if(estado_boton != estado_anterior){
+    		if(BOTON_PRESIONADO){
+      			return true;  
+    		}
+    		estado_anterior = estado_boton;
+  	} 
+    	return(false);
 	}
 
 void InvertirEstadoReflector(void)
