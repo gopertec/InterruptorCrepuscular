@@ -150,9 +150,14 @@ bool SePresionoBoton(void)
     	return(false);
 	}
 
-void InvertirEstadoReflector(void)
+void InvertirEstadoReflector(void)  //Nacho
 	{
+	static bool ledEstado = LOW;
 
+	ledEstado = !ledEstado;
+
+	if (ledEstado) ENCENDER_REFLECTOR;
+	else           APAGAR_REFLECTOR;
 	}
 
 void loop(void)
