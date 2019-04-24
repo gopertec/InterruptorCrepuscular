@@ -99,22 +99,23 @@ void LedTest(void)  //Matias y Enrique
 
 void CtrlAutomaticoReflector(void) //Ezequiel
 	{
-
-
+	static bool detecta_presencia_ant=0;
 	static unsigned long millis_inicial = 0;
 
 	if (!ESTA_OSCURO)return;
+	//...está oscuro
 
 	//ALEJO: Esto está EXCELENTE para trabar el programa!!! Así nadie puede hacer más nada...
 	///...mientras detecta presencia!!!!
 	//detectar el INSTANTE... es decir, el momento en que cambia de estado la señal DETECTA_PRESENCIA
-	while (DETECTA_PRESENCIA) ///////// mientras haya movimiento la luz va a estar prendida, cuando deja de detectar presencia empieza el conteo
+	if (DETECTA_PRESENCIA != detecta_presencia_ant) ///////// mientras haya movimiento la luz va a estar prendida, cuando deja de detectar presencia empieza el conteo
 		{			
+		detecta_presencia_ant=DETECTA_PRESENCIA;
+		if(!DETECTA_PRESENCIA) return;
 		// Si se quiere que en el momento que detecte presencia se active, cambiar while por if
 		millis_inicial = millis();
 		ENCENDER_REFLECTOR;
 		reflector = 1;
-
 		}
 	if (reflector)
 		{
@@ -139,24 +140,26 @@ void RegistroAcumuladoDeMarcha(void)
 
 bool SePresionoBoton(void)
 	{
-	static bool estado_anterior = digitalRead(PIN_BOTON);
-  	bool estado_boton = digitalRead(PIN_BOTON);
-  	if(estado_boton != estado_anterior){
-    		if(BOTON_PRESIONADO){
-      			return true;  
+	static bool estado_anterior = BOTON_PRESIONADO;	//digitalRead(PIN_BOTON);	//TODO: usar la definición BOTON_PRESIONADO
+//  	bool estado_boton = digitalRead(PIN_BOTON);				//TODO: usar la definición BOTON_PRESIONADO
+  	if(BOTON_PRESIONADO != estado_anterior)
+	  	{
+		estado_anterior = BOTON_PRESIONADO;
+    	if(BOTON_PRESIONADO)
+			{
+      		return true;  
     		}
-    		estado_anterior = estado_boton;
-  	} 
-    	return(false);
+  		} 
+    return(false);
 	}
 
 void InvertirEstadoReflector(void)  //Nacho
 	{
 
 	reflector = !reflector;
-	if(reflector) ENCENDER_REFLECTOR;
-	else APAGAR_REFLECTOR;
 
+	if(reflector)	ENCENDER_REFLECTOR;
+	else 			APAGAR_REFLECTOR;
 	}
 
 void loop(void)
