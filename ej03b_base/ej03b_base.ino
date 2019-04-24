@@ -4,7 +4,7 @@ Tecnicatura Superior en Desarrollo de Software
 
 Cátedra Microcontroladores II
 
-Escrito Por:
+Escrito Por: Daniel
 
 Fecha:
 
