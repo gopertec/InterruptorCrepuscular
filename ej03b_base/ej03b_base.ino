@@ -73,7 +73,7 @@ Se debe apagar de manera temporizada únicamente si se encendió de manera autom
 unsigned char pulsos = 1;
 unsigned long millis_pulso = 200, millis_off = 1000;
 
-bool reflector = 0;
+bool reflector = 0;	//el reflector se enciende/apaga según esta variable
 
 void setup(void)
 	{
@@ -109,8 +109,13 @@ void CtrlAutomaticoReflector(void) //Ezequiel
 	static unsigned long millis_inicial = 0;
 
 	if (!ESTA_OSCURO)return;
-	while (DETECTA_PRESENCIA) ///////// mientras alla movimiento la luz va a estar prendida, cuando deja de detectar presencia empieza el conteo
-		{			// Si se quiere que en el momento que detecte presencia se active, cambiar while por if
+
+	//ALEJO: Esto está EXCELENTE para trabar el programa!!! Así nadie puede hacer más nada...
+	///...mientras detecta presencia!!!!
+	//detectar el INSTANTE... es decir, el momento en que cambia de estado la señal DETECTA_PRESENCIA
+	while (DETECTA_PRESENCIA) ///////// mientras haya movimiento la luz va a estar prendida, cuando deja de detectar presencia empieza el conteo
+		{			
+		// Si se quiere que en el momento que detecte presencia se active, cambiar while por if
 		millis_inicial = millis();
 		ENCENDER_REFLECTOR;
 		reflector = 1;
