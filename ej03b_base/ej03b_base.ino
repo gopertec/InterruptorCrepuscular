@@ -69,6 +69,7 @@ unsigned char pulsos = 1;
 unsigned long millis_pulso = 200, millis_off = 1000;
 
 bool reflector = 0;	//el reflector se enciende/apaga según esta variable
+bool encendido_manual=0;
 
 void setup(void)
 	{
@@ -117,6 +118,9 @@ void CtrlAutomaticoReflector(void) //Ezequiel
 		ENCENDER_REFLECTOR;
 		reflector = 1;
 		}
+	
+	if(encendido_manual) return;
+
 	if (reflector)
 		{
 		if (millis() - millis_inicial > MS_REFLECTOR_ENCENDIDO)
@@ -160,6 +164,8 @@ void InvertirEstadoReflector(void)  //Nacho
 
 	if(reflector)	ENCENDER_REFLECTOR;
 	else 			APAGAR_REFLECTOR;
+	
+	encendido_manual = reflector;
 	}
 
 void loop(void)
