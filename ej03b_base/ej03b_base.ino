@@ -71,6 +71,8 @@ unsigned long millis_pulso = 200, millis_off = 1000;
 bool reflector = 0;	//el reflector se enciende/apaga según esta variable
 bool encendido_manual=0;
 
+unsigned int encendidos=0; 
+
 void setup(void)
 	{
 	CONFIGURAR_DETECTA_OSCURIDAD;
@@ -133,10 +135,16 @@ void CtrlAutomaticoReflector(void) //Ezequiel
 	}
 
 void ContadorDeEncendido(void)
-	{
-
-	}
-
+  {
+    static bool estado_anterior=LOW;
+      if(reflector!=estado_anterior){
+        estado_anterior=reflector;
+        if(reflector){
+          encendidos++;
+      }
+    }
+  }
+  
 void RegistroAcumuladoDeMarcha(void)
 	{
 
