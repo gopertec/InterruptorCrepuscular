@@ -109,8 +109,8 @@ void CtrlAutomaticoReflector(void) //Ezequiel
 	static unsigned long millis_inicial = 0;
 
 	if (!ESTA_OSCURO)return;
-	if (DETECTA_PRESENCIA)
-		{
+	while (DETECTA_PRESENCIA) ///////// mientras alla movimiento la luz va a estar prendida, cuando deja de detectar presencia empieza el conteo
+		{			// Si se quiere que en el momento que detecte presencia se active, cambiar while por if
 		millis_inicial = millis();
 		ENCENDER_REFLECTOR;
 		reflector = 1;
