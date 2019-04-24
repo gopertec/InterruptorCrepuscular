@@ -82,6 +82,7 @@ void setup(void)
 
 	APAGAR_REFLECTOR;
 	APAGAR_LED_TEST;
+	Serial.begin(9600);
 	}
 
 void LedTest(void)  //Matias y Enrique
@@ -141,6 +142,7 @@ void ContadorDeEncendido(void)
         estado_anterior=reflector;
         if(reflector){
           encendidos++;
+		//   Serial.print("Encendidos: ");	  Serial.println(encendidos);
       }
     }
   }
