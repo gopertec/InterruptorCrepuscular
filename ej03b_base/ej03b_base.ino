@@ -60,8 +60,6 @@ Se debe apagar de manera temporizada únicamente si se encendió de manera autom
 #define APAGAR_LED_TEST                         digitalWrite(PIN_LED_TEST, LOW)
 #define ENCENDER_LED_TEST                       digitalWrite(PIN_LED_TEST, HIGH)
 
-#define MS_REFLECTOR_ENCENDIDO                  2000
-
 #define ON                                      1
 #define OFF                                     0
 
@@ -72,6 +70,8 @@ bool reflector = 0;	//el reflector se enciende/apaga según esta variable
 bool encendido_manual=0;
 
 unsigned int encendidos=0;
+bool tx_temporizador=false;
+int temporizador=2000;
 
 void setup(void)
     {
@@ -125,7 +125,7 @@ void CtrlAutomaticoReflector(void) //Ezequiel
     if(encendido_manual) return;
 
     if (!reflector) return;
-    if (millis() - millis_inicial > MS_REFLECTOR_ENCENDIDO)
+    if (millis() - millis_inicial > temporizador)
         reflector = 0;
     }
 
@@ -171,6 +171,14 @@ void ActualizaSalidas(void)
     if(reflector)  ENCENDER_REFLECTOR;
     else      		APAGAR_REFLECTOR;
     }
+
+void TransmisionPorSerie(void){
+  if(tx_temporizador){
+    Serial.print("El valor de la variable temporizador es: ");
+    Serial.println(temporizador);
+    tx_temporizador=0;
+  }
+}
 
 void loop(void)
     {
