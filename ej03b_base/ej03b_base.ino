@@ -188,10 +188,20 @@ void TransmisionPorSerie(void){
   }
 }
 
+void RecibirPorSerie(void){
+  if(Serial.available()){
+    
+    if(Serial.read()=='T'){
+      tx_temporizador=1;
+    }
+  }
+}
+
 void loop(void)
     {
     LedTest();
     ActualizaSalidas();
+    RecibirPorSerie();
     TransmisionPorSerie();
     CtrlAutomaticoReflector();  //
 
