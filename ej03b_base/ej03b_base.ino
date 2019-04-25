@@ -70,7 +70,7 @@ bool reflector = 0;	//el reflector se enciende/apaga según esta variable
 bool encendido_manual=0;
 
 unsigned int encendidos=0;
-bool tx_temporizador=false;
+bool tx_temporizador=true;
 int temporizador=2000;
 
 void setup(void)
@@ -174,15 +174,18 @@ void ActualizaSalidas(void)
 
 void TransmisionPorSerie(void){
   if(tx_temporizador){
+    tx_temporizador=0;
     Serial.print("El valor de la variable temporizador es: ");
     Serial.println(temporizador);
-    tx_temporizador=0;
+    
   }
 }
 
 void loop(void)
     {
     LedTest();
+    ActualizaSalidas();
+    TransmisionPorSerie();
     CtrlAutomaticoReflector();  //
 
     ContadorDeEncendido();  //Contar la cantidad de veces que se enciende
@@ -190,5 +193,5 @@ void loop(void)
     if (SePresionoBoton())
         InvertirEstadoReflector();
 
-    ActualizaSalidas();
+   
     }
