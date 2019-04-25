@@ -111,17 +111,18 @@ void CtrlAutomaticoReflector(void) //Ezequiel
       millis_inicial = millis();
       ENCENDER_REFLECTOR;
       reflector = 1;
-
-    }
-  if (reflector)
-    {
-      if (millis() - millis_inicial > MS_REFLECTOR_ENCENDIDO)
+      if (reflector)
       {
-        APAGAR_REFLECTOR;
-        reflector = 0;
+        if (millis() - millis_inicial > MS_REFLECTOR_ENCENDIDO)
+        {
+          APAGAR_REFLECTOR;
+          reflector = 0;
 
+        }
       }
+
     }
+  
 }
 
 
