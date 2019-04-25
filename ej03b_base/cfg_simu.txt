@@ -1,0 +1,18 @@
+Push Button 1 wired to pin 8 with values U, L
+Push Button 2 wired to pin 9 with values U, M
+Push Button 3 wired to pin 7 with values U, M
+Switched Resistor 1 wired to pin -1 with value D
+Switched Resistor 2 wired to pin -1 with value D
+Switched Resistor 3 wired to pin -1 with value D
+Switched Resistor 4 wired to pin -1 with value D
+Coloured LED 1 wired to pin -1 with values D, R
+Coloured LED 2 wired to pin 10 with values D, R
+Coloured LED 3 wired to pin 3 with values D, R
+USB Serial 1 wired to pins 1, 0 with value 9600
+SFT Serial 1 wired to pins -1, -1 with value 300
+SPI Slave 1 wired to pins 11, 12, 10, 13 with values 0, 0xff
+One-Shot Generator 1 wired to pins -1, -1 with values R, R, 1000, 10000, U, U
+Servo Motor 1 wired to pin -1 with value N
+DC Motor 1 wired to pins -1, -1, -1 
+Digital Pulser 1 wired to pin -1 with values R, 1000, 10000, U, U
+Function Generator 1 wired to pin -1 with values T, 10000, U
