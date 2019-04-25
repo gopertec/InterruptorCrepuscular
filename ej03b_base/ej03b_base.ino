@@ -60,8 +60,6 @@ Se debe apagar de manera temporizada únicamente si se encendió de manera autom
 #define APAGAR_LED_TEST                         digitalWrite(PIN_LED_TEST, LOW)
 #define ENCENDER_LED_TEST                       digitalWrite(PIN_LED_TEST, HIGH)
 
-#define MS_REFLECTOR_ENCENDIDO                  2000
-
 #define ON                                      1
 #define OFF                                     0
 
@@ -73,6 +71,8 @@ bool reflector = 0;	//el reflector se enciende/apaga según esta variable
 bool encendido_manual=0;
 
 unsigned int encendidos=0;
+bool tx_temporizador=true;
+int temporizador=2000;
 
 void setup(void)
 {
@@ -103,32 +103,33 @@ void LedTest(void)  //Matias y Enrique
 }
 
 void CtrlAutomaticoReflector(void) //Ezequiel
-{
-	static bool detecta_presencia_ant=0;
-	static unsigned long millis_inicial = 0;
-	
-	if (!ESTA_OSCURO)return;
-		//...está oscuro
-	
-	//ALEJO: Esto está EXCELENTE para trabar el programa!!! Así nadie puede hacer más nada...
-	///...mientras detecta presencia!!!!
-	//detectar el INSTANTE... es decir, el momento en que cambia de estado la señal DETECTA_PRESENCIA
-	if (DETECTA_PRESENCIA != detecta_presencia_ant) ///////// mientras haya movimiento la luz va a estar prendida, cuando deja de detectar presencia empieza el conteo
-	{
-		detecta_presencia_ant=DETECTA_PRESENCIA;
-		if(!DETECTA_PRESENCIA) return;
-			// Si se quiere que en el momento que detecte presencia se active, cambiar while por if
-		millis_inicial = millis();
-		
-		reflector = 1;
-	}
-	
-	if(encendido_manual) return;
-		
-	if (!reflector) return;
-		if (millis() - millis_inicial > MS_REFLECTOR_ENCENDIDO)
-			reflector = 0;
-}
+    {
+    static bool detecta_presencia_ant=0;
+    static unsigned long millis_inicial = 0;
+
+    if (!ESTA_OSCURO)return;
+    //...está oscuro
+
+    //ALEJO: Esto está EXCELENTE para trabar el programa!!! Así nadie puede hacer más nada...
+    ///...mientras detecta presencia!!!!
+    //detectar el INSTANTE... es decir, el momento en que cambia de estado la señal DETECTA_PRESENCIA
+    if (DETECTA_PRESENCIA != detecta_presencia_ant) ///////// mientras haya movimiento la luz va a estar prendida, cuando deja de detectar presencia empieza el conteo
+        {
+        detecta_presencia_ant=DETECTA_PRESENCIA;
+        if(!DETECTA_PRESENCIA) return;
+        // Si se quiere que en el momento que detecte presencia se active, cambiar while por if
+        millis_inicial = millis();
+
+        reflector = 1;
+        }
+
+    if(encendido_manual) return;
+
+    if (!reflector) return;
+    if (millis() - millis_inicial > temporizador)
+        reflector = 0;
+    }
+
 
 void ContadorDeEncendido(void)	//Matias
 {
@@ -175,20 +176,31 @@ void InvertirEstadoReflector(void)  //Nacho
 }
 
 void ActualizaSalidas(void)
-{
-	if(reflector)  ENCENDER_REFLECTOR;
-		else      		APAGAR_REFLECTOR;
-	}
-	
-	void loop(void)
-	{
-		
-		Serial.print(tpo_marcha);
-		LedTest();
-		CtrlAutomaticoReflector();  //
-		ContadorDeEncendido();  //Contar la cantidad de veces que se enciende
-		RegistroAcumuladoDeMarcha();
-		if (SePresionoBoton())
-			InvertirEstadoReflector();
-		ActualizaSalidas();
-	}
+    {
+    if(reflector)  ENCENDER_REFLECTOR;
+    else      		APAGAR_REFLECTOR;
+    }
+
+void TransmisionPorSerie(void){
+  if(tx_temporizador){
+    tx_temporizador=0;
+    Serial.print("El valor de la variable temporizador es: ");
+    Serial.println(temporizador);
+    
+  }
+}
+
+void loop(void)
+    {
+    LedTest();
+    ActualizaSalidas();
+    TransmisionPorSerie();
+    CtrlAutomaticoReflector();  //
+
+    ContadorDeEncendido();  //Contar la cantidad de veces que se enciende
+    RegistroAcumuladoDeMarcha();
+    if (SePresionoBoton())
+        InvertirEstadoReflector();
+
+   
+    }

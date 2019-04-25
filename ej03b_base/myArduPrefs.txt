@@ -1,0 +1,13 @@
+es
+formato de sangría automática 1
+inserción automática de cierre-} 0
+permitir sintaxis experta 1
+hacer cumplir los límites matriz 1
+operadores lógicos de palabras clave 0
+muestra programa descarga 1
+número de fuente tipo de letra 2
+fuente tamaño de fuente numero 2
+multiplicador de tamaño de pestaña 2
+Versión 'Uno' placa de circuito 2
+TWI buffer de longitud 32
+IODevs archivo nombre cfg_simu.txt
