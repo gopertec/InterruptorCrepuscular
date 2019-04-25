@@ -67,6 +67,7 @@ Se debe apagar de manera temporizada únicamente si se encendió de manera autom
 
 unsigned char pulsos = 1;
 unsigned long millis_pulso = 200, millis_off = 1000;
+unsigned long tpo_marcha =0;
 
 bool reflector = 0;	//el reflector se enciende/apaga según esta variable
 bool encendido_manual=0;
@@ -74,113 +75,120 @@ bool encendido_manual=0;
 unsigned int encendidos=0;
 
 void setup(void)
-    {
-    CONFIGURAR_DETECTA_OSCURIDAD;
-    CONFIGURAR_DETECTA_PRESENCIA;
-    CONFIGURAR_REFLECTOR;
-    CONFIGURAR_LED_TEST;
-
-    APAGAR_REFLECTOR;
-    APAGAR_LED_TEST;
-    Serial.begin(9600);
-    }
+{
+	CONFIGURAR_DETECTA_OSCURIDAD;
+	CONFIGURAR_DETECTA_PRESENCIA;
+	CONFIGURAR_REFLECTOR;
+	CONFIGURAR_LED_TEST;
+	
+	APAGAR_REFLECTOR;
+	APAGAR_LED_TEST;
+	Serial.begin(9600);
+}
 
 void LedTest(void)  //Matias y Enrique
-    {
-    static unsigned long millis_ini = 0;
-    const unsigned long intervalo = 500;
-    static int ledEstadoTest = LOW;
-
-    if (millis() - millis_ini < intervalo) return;
-    millis_ini = millis();
-
-    ledEstadoTest = !ledEstadoTest;
-
-    if (ledEstadoTest)  ENCENDER_LED_TEST;
-    else        APAGAR_LED_TEST;
-
-    }
+{
+	static unsigned long millis_ini = 0;
+	const unsigned long intervalo = 500;
+	static int ledEstadoTest = LOW;
+	
+	if (millis() - millis_ini < intervalo) return;
+		millis_ini = millis();
+	
+	ledEstadoTest = !ledEstadoTest;
+	
+	if (ledEstadoTest)  ENCENDER_LED_TEST;
+		else        APAGAR_LED_TEST;
+			
+}
 
 void CtrlAutomaticoReflector(void) //Ezequiel
-    {
-    static bool detecta_presencia_ant=0;
-    static unsigned long millis_inicial = 0;
-
-    if (!ESTA_OSCURO)return;
-    //...está oscuro
-
-    //ALEJO: Esto está EXCELENTE para trabar el programa!!! Así nadie puede hacer más nada...
-    ///...mientras detecta presencia!!!!
-    //detectar el INSTANTE... es decir, el momento en que cambia de estado la señal DETECTA_PRESENCIA
-    if (DETECTA_PRESENCIA != detecta_presencia_ant) ///////// mientras haya movimiento la luz va a estar prendida, cuando deja de detectar presencia empieza el conteo
-        {
-        detecta_presencia_ant=DETECTA_PRESENCIA;
-        if(!DETECTA_PRESENCIA) return;
-        // Si se quiere que en el momento que detecte presencia se active, cambiar while por if
-        millis_inicial = millis();
-
-        reflector = 1;
-        }
-
-    if(encendido_manual) return;
-
-    if (!reflector) return;
-    if (millis() - millis_inicial > MS_REFLECTOR_ENCENDIDO)
-        reflector = 0;
-    }
+{
+	static bool detecta_presencia_ant=0;
+	static unsigned long millis_inicial = 0;
+	
+	if (!ESTA_OSCURO)return;
+		//...está oscuro
+	
+	//ALEJO: Esto está EXCELENTE para trabar el programa!!! Así nadie puede hacer más nada...
+	///...mientras detecta presencia!!!!
+	//detectar el INSTANTE... es decir, el momento en que cambia de estado la señal DETECTA_PRESENCIA
+	if (DETECTA_PRESENCIA != detecta_presencia_ant) ///////// mientras haya movimiento la luz va a estar prendida, cuando deja de detectar presencia empieza el conteo
+	{
+		detecta_presencia_ant=DETECTA_PRESENCIA;
+		if(!DETECTA_PRESENCIA) return;
+			// Si se quiere que en el momento que detecte presencia se active, cambiar while por if
+		millis_inicial = millis();
+		
+		reflector = 1;
+	}
+	
+	if(encendido_manual) return;
+		
+	if (!reflector) return;
+		if (millis() - millis_inicial > MS_REFLECTOR_ENCENDIDO)
+			reflector = 0;
+}
 
 void ContadorDeEncendido(void)	//Matias
-    {
-    static bool estado_anterior=LOW;
-
-    if(reflector==estado_anterior) return;
-    estado_anterior=reflector;
-
-    if(reflector)
-        {
-        encendidos++;
-        //   Serial.print("Encendidos: ");	  Serial.println(encendidos);
-        }
-    }
+{
+	static bool estado_anterior=LOW;
+	
+	if(reflector==estado_anterior) return;
+		estado_anterior=reflector;
+	
+	if(reflector)
+	{
+		encendidos++;
+		//   Serial.print("Encendidos: ");	  Serial.println(encendidos);
+	}
+}
 
 void RegistroAcumuladoDeMarcha(void)
-    {
-
-    }
+{
+	static bool estado_anterior=LOW;
+	
+	if(reflector==estado_anterior) return;
+		estado_anterior=reflector;
+	
+	if(reflector == 1)
+	{
+		tpo_marcha = (tpo_marcha + millis()) / 1000;
+		//tpo_marcha = tpo_marcha / 1000;
+	}
+}
 
 bool SePresionoBoton(void)
-    {
-    static bool estado_anterior = BOTON_PRESIONADO;
-
-    if(BOTON_PRESIONADO==estado_anterior) return(false);
-    estado_anterior = BOTON_PRESIONADO;
-    if(BOTON_PRESIONADO) return true;
-	return (false);
-    }
+{
+	static bool estado_anterior = BOTON_PRESIONADO;
+	
+	if(BOTON_PRESIONADO==estado_anterior) return(false);
+		estado_anterior = BOTON_PRESIONADO;
+	if(BOTON_PRESIONADO) return true;
+		return (false);
+}
 
 void InvertirEstadoReflector(void)  //Nacho
-    {
-
-    reflector = !reflector;
-    encendido_manual = reflector;
-
-    }
+{
+	reflector = !reflector;
+	encendido_manual = reflector;
+}
 
 void ActualizaSalidas(void)
-    {
-    if(reflector)  ENCENDER_REFLECTOR;
-    else      		APAGAR_REFLECTOR;
-    }
-
-void loop(void)
-    {
-    LedTest();
-    CtrlAutomaticoReflector();  //
-
-    ContadorDeEncendido();  //Contar la cantidad de veces que se enciende
-    RegistroAcumuladoDeMarcha();
-    if (SePresionoBoton())
-        InvertirEstadoReflector();
-
-    ActualizaSalidas();
-    }
+{
+	if(reflector)  ENCENDER_REFLECTOR;
+		else      		APAGAR_REFLECTOR;
+	}
+	
+	void loop(void)
+	{
+		
+		Serial.print(tpo_marcha);
+		LedTest();
+		CtrlAutomaticoReflector();  //
+		ContadorDeEncendido();  //Contar la cantidad de veces que se enciende
+		RegistroAcumuladoDeMarcha();
+		if (SePresionoBoton())
+			InvertirEstadoReflector();
+		ActualizaSalidas();
+	}
