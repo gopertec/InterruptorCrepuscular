@@ -118,7 +118,7 @@ void CtrlAutomaticoReflector(void) //Ezequiel
 		if(!DETECTA_PRESENCIA) return;
 		// Si se quiere que en el momento que detecte presencia se active, cambiar while por if
 		millis_inicial = millis();
-		ENCENDER_REFLECTOR;
+		
 		reflector = 1;
 		}
 	
@@ -128,7 +128,7 @@ void CtrlAutomaticoReflector(void) //Ezequiel
 		{
 		if (millis() - millis_inicial > MS_REFLECTOR_ENCENDIDO)
 			{
-			APAGAR_REFLECTOR;
+			
 			reflector = 0;
 
 			}
@@ -169,14 +169,19 @@ bool SePresionoBoton(void)
 
 void InvertirEstadoReflector(void)  //Nacho
 	{
-
+  
 	reflector = !reflector;
-
-	if(reflector)	ENCENDER_REFLECTOR;
-	else 			APAGAR_REFLECTOR;
-	
 	encendido_manual = reflector;
+	
 	}
+
+void ActualizaSalidas(void)
+  {
+  
+  if(reflector)  ENCENDER_REFLECTOR;
+  else      APAGAR_REFLECTOR;  
+
+  }
 
 void loop(void)
 	{
@@ -187,4 +192,6 @@ void loop(void)
 	RegistroAcumuladoDeMarcha();
 	if (SePresionoBoton())
 		InvertirEstadoReflector();
+
+  ActualizaSalidas();
 	}
