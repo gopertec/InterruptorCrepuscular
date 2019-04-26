@@ -191,13 +191,20 @@ void TransmisionPorSerie(void){
 }
 
 void RecibirPorSerie(void){
-  if(Serial.available()){
-    
-    if(Serial.read()=='T'){
-      tx_temporizador=1;
+  if(!Serial.available())return;
+    char dato=Serial.read();
+    switch(dato){
+      case 'T': 
+      tx_temporizador=1; break;
+      case 't': {
+      String cadena=Serial.readString();
+      temporizador=cadena.toInt();}
+                break;
+      default: break;
+      
     }
   }
-}
+
 
 void loop(void)
     {
