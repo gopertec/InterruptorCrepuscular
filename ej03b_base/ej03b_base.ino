@@ -72,6 +72,7 @@ bool encendido_manual=0;
 
 unsigned int encendidos=0;
 bool tx_temporizador=true;
+bool tx_encendidos=true;
 int temporizador=2000;
 
 void setup(void)
@@ -147,15 +148,13 @@ void ContadorDeEncendido(void)	//Matias
 
 void RegistroAcumuladoDeMarcha(void)
 {
-	static bool estado_anterior=LOW;
-	
-	if(reflector==estado_anterior) return;
-		estado_anterior=reflector;
-	
-	if(reflector == 1)
+	static unsigned long tiempo_inicial=0;
+		
+	if(reflector==0) return;
+	if (millis() - tiempo_inicial >= 1000)
 	{
-		tpo_marcha = (tpo_marcha + millis()) / 1000;
-		//tpo_marcha = tpo_marcha / 1000;
+        tpo_marcha ++;
+        tiempo_inicial=millis();
 	}
 }
 
@@ -188,6 +187,12 @@ void TransmisionPorSerie(void){
     Serial.println(temporizador);
     
   }
+  if(tx_encendidos){
+    tx_encendidos=0;
+    Serial.print("El valor de la variable encendidos es: ");
+    Serial.println(encendidos);
+    
+  }	
 }
 
 void RecibirPorSerie(void){
