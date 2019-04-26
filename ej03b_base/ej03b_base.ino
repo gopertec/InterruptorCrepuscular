@@ -72,6 +72,7 @@ bool encendido_manual=0;
 
 unsigned int encendidos=0;
 bool tx_temporizador=true;
+bool tx_encendidos=true;
 int temporizador=2000;
 
 void setup(void)
@@ -186,6 +187,12 @@ void TransmisionPorSerie(void){
     Serial.println(temporizador);
     
   }
+  if(tx_encendidos){
+    tx_encendidos=0;
+    Serial.print("El valor de la variable encendidos es: ");
+    Serial.println(encendidos);
+    
+  }	
 }
 
 void RecibirPorSerie(void){
