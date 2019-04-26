@@ -204,6 +204,12 @@ void RecibirPorSerie(void){
       case 't': {
       String cadena=Serial.readString();
       temporizador=cadena.toInt(); break;}
+      case 'E': 
+      tx_encendidos=1; break;
+      case 'e': {
+      String str=Serial.readString();
+      encendidos=str.toInt(); break;}	    
+		    
       default: break;
       
     }
