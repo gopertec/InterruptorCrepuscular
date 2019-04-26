@@ -203,8 +203,7 @@ void RecibirPorSerie(void){
       tx_temporizador=1; break;
       case 't': {
       String cadena=Serial.readString();
-      temporizador=cadena.toInt();}
-                break;
+      temporizador=cadena.toInt(); break;}
       default: break;
       
     }
