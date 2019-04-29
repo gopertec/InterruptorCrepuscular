@@ -4,7 +4,7 @@ Tecnicatura Superior en Desarrollo de Software
 
 Cátedra Microcontroladores II
 
-Escrito Por: Daniel
+Escrito Por: 
 
 Fecha:
 
@@ -88,21 +88,31 @@ void setup(void)
 }
 
 void LedTest(void)  //Matias y Enrique
-{
+  {
 	static unsigned long millis_ini = 0;
 	const unsigned long intervalo = 500;
 	static int ledEstadoTest = LOW;
-	
 	if (millis() - millis_ini < intervalo) return;
-		millis_ini = millis();
-	
+	millis_ini = millis();
 	ledEstadoTest = !ledEstadoTest;
-	
 	if (ledEstadoTest)  ENCENDER_LED_TEST;
-		else        APAGAR_LED_TEST;
-			
-}
+		else        APAGAR_LED_TEST;		
+  }
 
+bool SePresionoBoton(void)
+  {
+  static bool estado_anterior = BOTON_PRESIONADO;
+  if(BOTON_PRESIONADO==estado_anterior) return(false);
+  estado_anterior = BOTON_PRESIONADO;
+  return BOTON_PRESIONADO;
+  }
+
+void InvertirEstadoReflector(void)  //Nacho
+  {
+  reflector = !reflector;
+  encendido_manual = reflector;
+  }
+  
 void CtrlAutomaticoReflector(void) //Ezequiel
     {
     static bool detecta_presencia_ant=0;
@@ -131,48 +141,72 @@ void CtrlAutomaticoReflector(void) //Ezequiel
         reflector = 0;
     }
 
+/*
+ Daniel Ranz
+ Hola a todos! Permiso para aportar, moví las funciones  InvertirEstadoReflector() y SePresionoBoton() para arriba por que cuando se usan 
+ funciones unas dentro de otras las que estan adentro de otra tienen que estar definidas anteriormente. A SePresionoBoton() la deje igual a la q vimos en clase. 
+ El codigo esta chequeado y probado, funciona. Dejo el aporte como comentario para esperar la aprobacion de todos y por supuesto del profe.
+ para probarlo hay que comentar la funcion CtrlAutomaticoReflector() q hizo el Eze y en el loop() borrar el if y reemplazar CtrlAutomaticoReflector() 
+ por la controlAutoManual() que esta en este comentario abajo y descomentar todo lo que sigue:
+ 
+ void modoAutomatico(void)
+  {
+  static unsigned long millis_ini=0;
+  if(ESTA_OSCURO&DETECTA_PRESENCIA&!reflector)
+    { 
+    reflector=1;
+    millis_ini=millis();
+    }
+  if(reflector)
+    {
+    if(millis()-millis_ini<temporizador)return;
+    reflector=0;  
+    } 
+  }
+ 
+void modoManual(void)
+  { 
+    InvertirEstadoReflector();
+  }
 
+void controlAutoManual(void)
+  {
+  if(SePresionoBoton()) 
+    {
+      modoManual();
+      return;
+    }
+    else
+    {   
+      if(!encendido_manual)modoAutomatico();
+      } 
+    } 
+
+*/
 void ContadorDeEncendido(void)	//Matias
-{
+  {
 	static bool estado_anterior=LOW;
-	
 	if(reflector==estado_anterior) return;
 		estado_anterior=reflector;
-	
 	if(reflector)
-	{
+	  {
 		encendidos++;
 		//   Serial.print("Encendidos: ");	  Serial.println(encendidos);
-	}
-}
+	  } 
+    }
 
 void RegistroAcumuladoDeMarcha(void)
-{
+  {
 	static unsigned long tiempo_inicial=0;
-		
 	if(reflector==0) return;
 	if (millis() - tiempo_inicial >= 1000)
-	{
-        tpo_marcha ++;
-        tiempo_inicial=millis();
-	}
-}
+	  {
+    tpo_marcha ++;
+    tiempo_inicial=millis();
+	  }
+  }
 
-bool SePresionoBoton(void)
-{
-	static bool estado_anterior = BOTON_PRESIONADO;
-	
-	if(BOTON_PRESIONADO==estado_anterior) return(false);
-		estado_anterior = BOTON_PRESIONADO;
-	if(BOTON_PRESIONADO) return true;
-		return (false);
-}
 
-void InvertirEstadoReflector(void)  //Nacho
-{
-	reflector = !reflector;
-	encendido_manual = reflector;
-}
 
 void ActualizaSalidas(void)
     {
@@ -180,38 +214,47 @@ void ActualizaSalidas(void)
     else      		APAGAR_REFLECTOR;
     }
 
-void TransmisionPorSerie(void){
-  if(tx_temporizador){
+void TransmisionPorSerie(void)
+  {
+  if(tx_temporizador)
+    {
     tx_temporizador=0;
     Serial.print("El valor de la variable temporizador es: ");
     Serial.println(temporizador);
-    
-  }
-  if(tx_encendidos){
+    }
+  if(tx_encendidos)
+    {
     tx_encendidos=0;
     Serial.print("El valor de la variable encendidos es: ");
     Serial.println(encendidos);
-    
-  }	
-}
+    }	
+  }
 
-void RecibirPorSerie(void){
+void RecibirPorSerie(void)
+  {
   if(!Serial.available())return;
-    char dato=Serial.read();
-    switch(dato){
-      case 'T': 
-      tx_temporizador=1; break;
-      case 't': {
+  char dato=Serial.read();
+  switch(dato)
+    {
+    case 'T': 
+      tx_temporizador=1; 
+      break;
+    case 't': 
+      {
       String cadena=Serial.readString();
-      temporizador=cadena.toInt(); break;}
+      temporizador=cadena.toInt();
+      break;
+      }
       case 'E': 
-      tx_encendidos=1; break;
-      case 'e': {
+      tx_encendidos=1; 
+      break;
+      case 'e': 
+      {
       String str=Serial.readString();
-      encendidos=str.toInt(); break;}	    
-		    
+      encendidos=str.toInt();
+      break;
+      }	      
       default: break;
-      
     }
   }
 
@@ -223,11 +266,8 @@ void loop(void)
     RecibirPorSerie();
     TransmisionPorSerie();
     CtrlAutomaticoReflector();  //
-
     ContadorDeEncendido();  //Contar la cantidad de veces que se enciende
     RegistroAcumuladoDeMarcha();
     if (SePresionoBoton())
         InvertirEstadoReflector();
-
-   
     }
