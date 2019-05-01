@@ -154,13 +154,13 @@ void CtrlAutomaticoReflector(void) //Ezequiel
   static unsigned long millis_ini=0;
   if(ESTA_OSCURO&DETECTA_PRESENCIA&!reflector)
     { 
-    reflector=1;
+    reflector=ON;
     millis_ini=millis();
     }
   if(reflector)
     {
     if(millis()-millis_ini<temporizador)return;
-    reflector=0;  
+    reflector=OFF;  
     } 
   }
  
