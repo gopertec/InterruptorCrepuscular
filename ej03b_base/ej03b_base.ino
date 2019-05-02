@@ -4,7 +4,7 @@ Tecnicatura Superior en Desarrollo de Software
 
 Cátedra Microcontroladores II
 
-Escrito Por: 
+Escrito Por:
 
 Fecha:
 
@@ -76,54 +76,56 @@ bool tx_encendidos=true;
 int temporizador=2000;
 
 void setup(void)
-{
-	CONFIGURAR_DETECTA_OSCURIDAD;
-	CONFIGURAR_DETECTA_PRESENCIA;
-	CONFIGURAR_REFLECTOR;
-	CONFIGURAR_LED_TEST;
-	
-	APAGAR_REFLECTOR;
-	APAGAR_LED_TEST;
-	Serial.begin(9600);
-}
+    {
+    CONFIGURAR_DETECTA_OSCURIDAD;
+    CONFIGURAR_DETECTA_PRESENCIA;
+    CONFIGURAR_REFLECTOR;
+    CONFIGURAR_LED_TEST;
+
+    APAGAR_REFLECTOR;
+    APAGAR_LED_TEST;
+    Serial.begin(9600);
+    }
 
 void LedTest(void)  //Matias y Enrique
-  {
-	static unsigned long millis_ini = 0;
-	const unsigned long intervalo = 500;
-	static int ledEstadoTest = LOW;
-	if (millis() - millis_ini < intervalo) return;
-	millis_ini = millis();
-	ledEstadoTest = !ledEstadoTest;
-	if (ledEstadoTest)  ENCENDER_LED_TEST;
-		else        APAGAR_LED_TEST;		
-  }
+    {
+    static unsigned long millis_ini = 0;
+    const unsigned long intervalo = 500;
+    static int ledEstadoTest = LOW;
+    if (millis() - millis_ini < intervalo) return;
+    millis_ini = millis();
+    ledEstadoTest = !ledEstadoTest;
+    if (ledEstadoTest)  ENCENDER_LED_TEST;
+    else        APAGAR_LED_TEST;
+    }
 
 bool SePresionoBoton(void)
-  {
-  static bool estado_anterior = BOTON_PRESIONADO;
-  if(BOTON_PRESIONADO==estado_anterior) return(false);
-  estado_anterior = BOTON_PRESIONADO;
-  return BOTON_PRESIONADO;
-  }
+    {
+    static bool estado_anterior = BOTON_PRESIONADO;
+    if(BOTON_PRESIONADO==estado_anterior) return(false);
+    estado_anterior = BOTON_PRESIONADO;
+    return BOTON_PRESIONADO;
+    }
 
 void InvertirEstadoReflector(void)  //Nacho
-  {
-  reflector = !reflector;
-  encendido_manual = reflector;
-  }
-  
+    {
+    reflector = !reflector;
+    encendido_manual = reflector;
+    }
+
 void CtrlAutomaticoReflector(void) //Ezequiel
     {
+    /*
+    ALEJO--> Acomodar.
+    Ahora, si está encendido el reflector y deja de detectar oscuridad,
+    el reflector queda encendido.
+    */
     static bool detecta_presencia_ant=0;
     static unsigned long millis_inicial = 0;
 
     if (!ESTA_OSCURO)return;
     //...está oscuro
 
-    //ALEJO: Esto está EXCELENTE para trabar el programa!!! Así nadie puede hacer más nada...
-    ///...mientras detecta presencia!!!!
-    //detectar el INSTANTE... es decir, el momento en que cambia de estado la señal DETECTA_PRESENCIA
     if (DETECTA_PRESENCIA != detecta_presencia_ant) ///////// mientras haya movimiento la luz va a estar prendida, cuando deja de detectar presencia empieza el conteo
         {
         detecta_presencia_ant=DETECTA_PRESENCIA;
@@ -143,68 +145,68 @@ void CtrlAutomaticoReflector(void) //Ezequiel
 
 /*
  Daniel Ranz
- Hola a todos! Permiso para aportar, moví las funciones  InvertirEstadoReflector() y SePresionoBoton() para arriba por que cuando se usan 
- funciones unas dentro de otras las que estan adentro de otra tienen que estar definidas anteriormente. A SePresionoBoton() la deje igual a la q vimos en clase. 
+ Hola a todos! Permiso para aportar, moví las funciones  InvertirEstadoReflector() y SePresionoBoton() para arriba por que cuando se usan
+ funciones unas dentro de otras las que estan adentro de otra tienen que estar definidas anteriormente. A SePresionoBoton() la deje igual a la q vimos en clase.
  El codigo esta chequeado y probado, funciona. Dejo el aporte como comentario para esperar la aprobacion de todos y por supuesto del profe.
- para probarlo hay que comentar la funcion CtrlAutomaticoReflector() q hizo el Eze y en el loop() borrar el if y reemplazar CtrlAutomaticoReflector() 
+ para probarlo hay que comentar la funcion CtrlAutomaticoReflector() q hizo el Eze y en el loop() borrar el if y reemplazar CtrlAutomaticoReflector()
  por la controlAutoManual() que esta en este comentario abajo y descomentar todo lo que sigue:
- 
+
  void modoAutomatico(void)
   {
   static unsigned long millis_ini=0;
   if(ESTA_OSCURO&DETECTA_PRESENCIA&!reflector)
-    { 
+    {
     reflector=ON;
     millis_ini=millis();
     }
   if(reflector)
     {
     if(millis()-millis_ini<temporizador)return;
-    reflector=OFF;  
-    } 
+    reflector=OFF;
+    }
   }
- 
+
 void modoManual(void)
-  { 
+  {
     InvertirEstadoReflector();
   }
 
 void controlAutoManual(void)
   {
-  if(SePresionoBoton()) 
+  if(SePresionoBoton())
     {
       modoManual();
       return;
     }
     else
-    {   
+    {
       if(!encendido_manual)modoAutomatico();
-      } 
-    } 
+      }
+    }
 
 */
 void ContadorDeEncendido(void)	//Matias
-  {
-	static bool estado_anterior=LOW;
-	if(reflector==estado_anterior) return;
-		estado_anterior=reflector;
-	if(reflector)
-	  {
-		encendidos++;
-		//   Serial.print("Encendidos: ");	  Serial.println(encendidos);
-	  } 
+    {
+    static bool estado_anterior=LOW;
+    if(reflector==estado_anterior) return;
+    estado_anterior=reflector;
+    if(reflector)
+        {
+        encendidos++;
+        //   Serial.print("Encendidos: ");	  Serial.println(encendidos);
+        }
     }
 
 void RegistroAcumuladoDeMarcha(void)
-  {
-	static unsigned long tiempo_inicial=0;
-	if(reflector==0) return;
-	if (millis() - tiempo_inicial >= 1000)
-	  {
-    tpo_marcha ++;
-    tiempo_inicial=millis();
-	  }
-  }
+    {
+    static unsigned long tiempo_inicial=0;
+    if(reflector==0) return;
+    if (millis() - tiempo_inicial >= 1000)
+        {
+        tpo_marcha ++;
+        tiempo_inicial=millis();
+        }
+    }
 
 
 
@@ -215,48 +217,52 @@ void ActualizaSalidas(void)
     }
 
 void TransmisionPorSerie(void)
-  {
-  if(tx_temporizador)
     {
-    tx_temporizador=0;
-    Serial.print("El valor de la variable temporizador es: ");
-    Serial.println(temporizador);
+    if(tx_temporizador)
+        {
+        tx_temporizador=0;
+        Serial.print("El valor de la variable temporizador es: ");
+        Serial.println(temporizador);
+        }
+    if(tx_encendidos)
+        {
+        tx_encendidos=0;
+        Serial.print("El valor de la variable encendidos es: ");
+        Serial.println(encendidos);
+        }
     }
-  if(tx_encendidos)
-    {
-    tx_encendidos=0;
-    Serial.print("El valor de la variable encendidos es: ");
-    Serial.println(encendidos);
-    }	
-  }
 
 void RecibirPorSerie(void)
-  {
-  if(!Serial.available())return;
-  char dato=Serial.read();
-  switch(dato)
     {
-    case 'T': 
-      tx_temporizador=1; 
-      break;
-    case 't': 
-      {
-      String cadena=Serial.readString();
-      temporizador=cadena.toInt();
-      break;
-      }
-      case 'E': 
-      tx_encendidos=1; 
-      break;
-      case 'e': 
-      {
-      String str=Serial.readString();
-      encendidos=str.toInt();
-      break;
-      }	      
-      default: break;
+    if(!Serial.available())return;
+    char dato=Serial.read();
+    switch(dato)
+        {
+        case 'T':
+            tx_temporizador=true;
+            break;
+        case 't':
+            {
+            String cadena=Serial.readString();
+            if(cadena.length())
+                temporizador=cadena.toInt();
+            tx_temporizador=true;
+            break;
+            }
+        case 'E':
+            tx_encendidos=1;
+            break;
+        case 'e':
+            {
+            String str=Serial.readString();
+            encendidos=str.toInt();
+            tx_encendidos=1;
+            break;
+            }
+        default:
+            break;
+        }
     }
-  }
 
 
 void loop(void)
