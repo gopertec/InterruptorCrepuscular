@@ -73,6 +73,7 @@ bool encendido_manual=0;
 unsigned int encendidos=0;
 bool tx_temporizador=true;
 bool tx_encendidos=true;
+bool tx_tpo_marcha=false;
 int temporizador=2000;
 
 void setup(void)
@@ -230,6 +231,12 @@ void TransmisionPorSerie(void)
         Serial.print("El valor de la variable encendidos es: ");
         Serial.println(encendidos);
         }
+    if(tx_tpo_marcha)
+        {
+        tx_tpo_marcha=0;
+        Serial.print("El valor de la variable tpo_marcha es: ");
+        Serial.println(tpo_marcha);
+        }
     }
 
 void RecibirPorSerie(void)
@@ -259,6 +266,13 @@ void RecibirPorSerie(void)
             tx_encendidos=1;
             break;
             }
+        case 'm':
+            tx_tpo_marcha=1;
+            break;
+        case 'M':
+            tpo_marcha=0;
+            tx_tpo_marcha=1;
+            break;
         default:
             break;
         }
