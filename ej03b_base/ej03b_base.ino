@@ -75,6 +75,12 @@ bool tx_temporizador=true;
 bool tx_encendidos=true;
 bool tx_tpo_marcha=false;
 int temporizador=2000;
+int tpo_energizado=30000;
+bool tx_tpo_energizado=true;
+bool tx_tiempo=false;
+unsigned long tiempo=0;
+
+
 
 void setup(void)
     {
@@ -209,6 +215,18 @@ void RegistroAcumuladoDeMarcha(void)
         }
     }
 
+void TiempoEnergizado(void)
+    {
+    static unsigned long tiempo_inicial=0;
+    tiempo=(millis()/1000);
+    if(millis() - tiempo_inicial<tpo_energizado) return;
+    tiempo_inicial=millis();
+    tx_tiempo=true;
+    
+   /* if(tiempo=30){
+      tx_tpo_energizado=true;
+    }*/
+    }
 
 
 void ActualizaSalidas(void)
@@ -236,6 +254,19 @@ void TransmisionPorSerie(void)
         tx_tpo_marcha=0;
         Serial.print("El valor de la variable tpo_marcha es: ");
         Serial.println(tpo_marcha);
+        }
+    if(tx_tpo_energizado)
+        {
+         tx_tpo_energizado=0;
+         Serial.print("El valor de la variable tpo_energizado es: ");
+         Serial.println(tpo_energizado);
+        }
+    if(tx_tiempo)
+        {
+          tx_tiempo=0;
+          Serial.print("El programa lleva energizado: ");
+          Serial.print(tiempo);
+          Serial.println(" segundos");
         }
     }
 
@@ -266,13 +297,24 @@ void RecibirPorSerie(void)
             tx_encendidos=1;
             break;
             }
-        case 'm':
+        case 'M':
             tx_tpo_marcha=1;
             break;
-        case 'M':
+        case 'm':
             tpo_marcha=0;
             tx_tpo_marcha=1;
             break;
+        case 'p':
+            tx_tpo_energizado=true;
+            break;
+        case 'P':
+            {
+            String cadena=Serial.readString();
+            if(cadena.length())
+                tpo_energizado=cadena.toInt();
+            tx_tpo_energizado=true;
+            break;
+            }
         default:
             break;
         }
@@ -288,6 +330,7 @@ void loop(void)
     CtrlAutomaticoReflector();  //
     ContadorDeEncendido();  //Contar la cantidad de veces que se enciende
     RegistroAcumuladoDeMarcha();
+    TiempoEnergizado();
     if (SePresionoBoton())
         InvertirEstadoReflector();
     }
