@@ -1,38 +1,28 @@
 /*
 ITES - Instituto Tecnológico de Educación Superior
 Tecnicatura Superior en Desarrollo de Software
-
 Cátedra Microcontroladores II
-
 Escrito Por:
-
 Fecha:
-
 --------------------------------------------------
-
 Ejercicio Nro. 3
-
 Primer proyecto en GitHub
-
 prueba por Ezequiel Errecalde
 prueba por Enrique Sabetta
 prueba por Matias Draeger
 --------------------------------------------------
 Objetivo:
 INTERRUPTOR CREPUSCULAR CON SENSOR DE PRESENCIA
-
 Condiciones:
 •  PIN 3 = Reflector (K1) (1 = activado)
 •  PIN 8 = Detector de luz (SW1) (1 = oscuro)
 •  PIN 9 = Detector de presencia (SW2) (1 = detección)
 •  PIN 10 = Destello de sistema funcionando (Utilizar este PIN como
 verificación visual de que el sistema está funcionando)
-
 NIVEL 1:
 Si está oscuro (SW1 == 1) y se detectó presencia (SW2 == 1), encender el
 reflector (K1 = 1) durante un tiempo determinado (fijo) y luego de dicho
 tiempo apagarlo.
-
 NIVEL 2:
 - Si se presionar el BOTON_COMANDO_MANUAL, debe encender el reflector si estaba apagado, y apagarlo si estaba encendido.
 Se debe apagar de manera temporizada únicamente si se encendió de manera automática.
@@ -67,7 +57,7 @@ unsigned char pulsos = 1;
 unsigned long millis_pulso = 200, millis_off = 1000;
 unsigned long tpo_marcha =0;
 
-bool reflector = 0;	//el reflector se enciende/apaga según esta variable
+bool reflector = 0;  //el reflector se enciende/apaga según esta variable
 bool encendido_manual=0;
 
 unsigned int encendidos=0;
@@ -130,21 +120,16 @@ void CtrlAutomaticoReflector(void) //Ezequiel
     static bool detecta_presencia_ant=0;
     static unsigned long millis_inicial = 0;
 
-    if (!ESTA_OSCURO)return;
-    //...está oscuro
+    if (!ESTA_OSCURO)return; //...está oscuro
 
     if (DETECTA_PRESENCIA != detecta_presencia_ant) ///////// mientras haya movimiento la luz va a estar prendida, cuando deja de detectar presencia empieza el conteo
         {
         detecta_presencia_ant=DETECTA_PRESENCIA;
-        if(!DETECTA_PRESENCIA) return;
-        // Si se quiere que en el momento que detecte presencia se active, cambiar while por if
-        millis_inicial = millis();
-
-        reflector = 1;
+          if(!DETECTA_PRESENCIA) return;               // Si se quiere que en el momento que detecte presencia se active, cambiar while por if
+          reflector = 1;
+          millis_inicial = millis();
         }
-
     if(encendido_manual) return;
-
     if (!reflector) return;
     if (millis() - millis_inicial > temporizador)
         reflector = 0;
@@ -157,7 +142,6 @@ void CtrlAutomaticoReflector(void) //Ezequiel
  El codigo esta chequeado y probado, funciona. Dejo el aporte como comentario para esperar la aprobacion de todos y por supuesto del profe.
  para probarlo hay que comentar la funcion CtrlAutomaticoReflector() q hizo el Eze y en el loop() borrar el if y reemplazar CtrlAutomaticoReflector()
  por la controlAutoManual() que esta en este comentario abajo y descomentar todo lo que sigue:
-
  void modoAutomatico(void)
   {
   static unsigned long millis_ini=0;
@@ -172,12 +156,10 @@ void CtrlAutomaticoReflector(void) //Ezequiel
     reflector=OFF;
     }
   }
-
 void modoManual(void)
   {
     InvertirEstadoReflector();
   }
-
 void controlAutoManual(void)
   {
   if(SePresionoBoton())
@@ -190,9 +172,8 @@ void controlAutoManual(void)
       if(!encendido_manual)modoAutomatico();
       }
     }
-
 */
-void ContadorDeEncendido(void)	//Matias
+void ContadorDeEncendido(void)  //Matias
     {
     static bool estado_anterior=LOW;
     if(reflector==estado_anterior) return;
@@ -200,15 +181,15 @@ void ContadorDeEncendido(void)	//Matias
     if(reflector)
         {
         encendidos++;
-        //   Serial.print("Encendidos: ");	  Serial.println(encendidos);
+        //   Serial.print("Encendidos: ");    Serial.println(encendidos);
         }
     }
 
-void RegistroAcumuladoDeMarcha(void)
+void RegistroAcumuladoDeMarcha(void) //ahi modifique la funcion, ahora respeta el tiempo que esta prendido //Ezequiel
     {
     static unsigned long tiempo_inicial=0;
     if(reflector==0) return;
-    if (millis() - tiempo_inicial >= 1000)
+    if (millis() - tiempo_inicial > 1000)
         {
         tpo_marcha ++;
         tiempo_inicial=millis();
@@ -232,7 +213,7 @@ void TiempoEnergizado(void)
 void ActualizaSalidas(void)
     {
     if(reflector)  ENCENDER_REFLECTOR;
-    else      		APAGAR_REFLECTOR;
+    else          APAGAR_REFLECTOR;
     }
 
 void TransmisionPorSerie(void)
