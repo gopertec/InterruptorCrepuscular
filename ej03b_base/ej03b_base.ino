@@ -104,10 +104,19 @@ void LedTest(void)  //Matias y Enrique
 
 bool SePresionoBoton(void)
 	{
-	static bool estado_anterior = BOTON_PRESIONADO;
-	if(BOTON_PRESIONADO==estado_anterior) return(false);
-	estado_anterior = BOTON_PRESIONADO;
-	return BOTON_PRESIONADO;
+	static bool boton_presionado_ant = LOW;
+  static unsigned long int momentoPulsado=0;
+  unsigned long int tiempoMuerto = 50;
+  
+  if (BOTON_PRESIONADO == boton_presionado_ant)  return (false);
+  
+  
+  if(millis()-momentoPulsado>tiempoMuerto){
+  boton_presionado_ant = BOTON_PRESIONADO;
+  momentoPulsado=millis();
+  } else return false;
+  
+  return (BOTON_PRESIONADO);
 	}
 
 void InvertirEstadoReflector(void)  //Nacho
