@@ -73,245 +73,205 @@ unsigned long tiempo=0;
 
 
 void setup(void)
-    {
-    CONFIGURAR_DETECTA_OSCURIDAD;
-    CONFIGURAR_DETECTA_PRESENCIA;
-    CONFIGURAR_REFLECTOR;
-    CONFIGURAR_LED_TEST;
+	{
+	CONFIGURAR_DETECTA_OSCURIDAD;
+	CONFIGURAR_DETECTA_PRESENCIA;
+	CONFIGURAR_REFLECTOR;
+	CONFIGURAR_LED_TEST;
 
-    APAGAR_REFLECTOR;
-    APAGAR_LED_TEST;
-    Serial.begin(9600);
-    }
+	APAGAR_REFLECTOR;
+	APAGAR_LED_TEST;
+	Serial.begin(9600);
+	}
 
 void LedTest(void)  //Matias y Enrique
-    {
-    static unsigned long millis_ini = 0;
-    const unsigned long intervalo = 500;
-    static int ledEstadoTest = LOW;
-    if (millis() - millis_ini < intervalo) return;
-    millis_ini = millis();
-    ledEstadoTest = !ledEstadoTest;
-    if (ledEstadoTest)  ENCENDER_LED_TEST;
-    else        APAGAR_LED_TEST;
-    }
+	{
+	static unsigned long millis_ini = 0;
+	const unsigned long intervalo = 500;
+	static int ledEstadoTest = LOW;
+	if (millis() - millis_ini < intervalo) return;
+	millis_ini = millis();
+	ledEstadoTest = !ledEstadoTest;
+	if (ledEstadoTest)  ENCENDER_LED_TEST;
+	else        APAGAR_LED_TEST;
+	}
 
 bool SePresionoBoton(void)
-    {
-    static bool estado_anterior = BOTON_PRESIONADO;
-    if(BOTON_PRESIONADO==estado_anterior) return(false);
-    estado_anterior = BOTON_PRESIONADO;
-    return BOTON_PRESIONADO;
-    }
+	{
+	static bool estado_anterior = BOTON_PRESIONADO;
+	if(BOTON_PRESIONADO==estado_anterior) return(false);
+	estado_anterior = BOTON_PRESIONADO;
+	return BOTON_PRESIONADO;
+	}
 
 void InvertirEstadoReflector(void)  //Nacho
-    {
-    reflector = !reflector;
-    encendido_manual = reflector;
-    }
+	{
+	reflector = !reflector;
+	encendido_manual = reflector;
+	}
 
 void CtrlAutomaticoReflector(void) //Ezequiel
-    {
-    /*
-    ALEJO--> Acomodar.
-    Ahora, si está encendido el reflector y deja de detectar oscuridad,
-    el reflector queda encendido.
-    */
-    static bool detecta_presencia_ant=0;
-    static unsigned long millis_inicial = 0;
+	{
+	/*
+	ALEJO--> Acomodar.
+	Ahora, si está encendido el reflector y deja de detectar oscuridad,
+	el reflector queda encendido.
+	*/
+	static bool detecta_presencia_ant=0;
+	static unsigned long millis_inicial = 0;
 
-    if (!ESTA_OSCURO)return; //...está oscuro
+	if (!ESTA_OSCURO)return; //...está oscuro
 
-    if (DETECTA_PRESENCIA != detecta_presencia_ant) ///////// mientras haya movimiento la luz va a estar prendida, cuando deja de detectar presencia empieza el conteo
-        {
-        detecta_presencia_ant=DETECTA_PRESENCIA;
-          if(!DETECTA_PRESENCIA) return;               // Si se quiere que en el momento que detecte presencia se active, cambiar while por if
-          reflector = 1;
-          millis_inicial = millis();
-        }
-    if(encendido_manual) return;
-    if (!reflector) return;
-    if (millis() - millis_inicial > temporizador)
-        reflector = 0;
-    }
+	if (DETECTA_PRESENCIA != detecta_presencia_ant) ///////// mientras haya movimiento la luz va a estar prendida, cuando deja de detectar presencia empieza el conteo
+		{
+		detecta_presencia_ant=DETECTA_PRESENCIA;
+		  if(!DETECTA_PRESENCIA) return;               // Si se quiere que en el momento que detecte presencia se active, cambiar while por if
+		  reflector = 1;
+		  millis_inicial = millis();
+		}
+	if(encendido_manual) return;
+	if (!reflector) return;
+	if (millis() - millis_inicial > temporizador)
+		reflector = 0;
+	}
 
-/*
- Daniel Ranz
- Hola a todos! Permiso para aportar, moví las funciones  InvertirEstadoReflector() y SePresionoBoton() para arriba por que cuando se usan
- funciones unas dentro de otras las que estan adentro de otra tienen que estar definidas anteriormente. A SePresionoBoton() la deje igual a la q vimos en clase.
- El codigo esta chequeado y probado, funciona. Dejo el aporte como comentario para esperar la aprobacion de todos y por supuesto del profe.
- para probarlo hay que comentar la funcion CtrlAutomaticoReflector() q hizo el Eze y en el loop() borrar el if y reemplazar CtrlAutomaticoReflector()
- por la controlAutoManual() que esta en este comentario abajo y descomentar todo lo que sigue:
- void modoAutomatico(void)
-  {
-  static unsigned long millis_ini=0;
-  if(ESTA_OSCURO&DETECTA_PRESENCIA&!reflector)
-    {
-    reflector=ON;
-    millis_ini=millis();
-    }
-  if(reflector)
-    {
-    if(millis()-millis_ini<temporizador)return;
-    reflector=OFF;
-    }
-  }
-void modoManual(void)
-  {
-    InvertirEstadoReflector();
-  }
-void controlAutoManual(void)
-  {
-  if(SePresionoBoton())
-    {
-      modoManual();
-      return;
-    }
-    else
-    {
-      if(!encendido_manual)modoAutomatico();
-      }
-    }
-*/
 void ContadorDeEncendido(void)  //Matias
-    {
-    static bool estado_anterior=LOW;
-    if(reflector==estado_anterior) return;
-    estado_anterior=reflector;
-    if(reflector)
-        {
-        encendidos++;
-        //   Serial.print("Encendidos: ");    Serial.println(encendidos);
-        }
-    }
+	{
+	static bool estado_anterior=LOW;
+	if(reflector==estado_anterior) return;
+	estado_anterior=reflector;
+	if(reflector)
+		{
+		encendidos++;
+		}
+	}
 
 void RegistroAcumuladoDeMarcha(void) //ahi modifique la funcion, ahora respeta el tiempo que esta prendido //Ezequiel
-    {
-    static unsigned long tiempo_inicial=0;
-    if(reflector==0) return;
-    if (millis() - tiempo_inicial > 1000)
-        {
-        tpo_marcha ++;
-        tiempo_inicial=millis();
-        }
-    }
+	{
+	static unsigned long tiempo_inicial=0;
+	if(reflector==0) return;
+	if (millis() - tiempo_inicial > 1000)
+		{
+		tpo_marcha ++;
+		tiempo_inicial=millis();
+		}
+	}
 
 void TiempoEnergizado(void)
-    {
-    static unsigned long tiempo_inicial=0;
-    tiempo=(millis()/1000);
-    if(millis() - tiempo_inicial<tpo_energizado) return;
-    tiempo_inicial=millis();
-    tx_tiempo=true;
-    
+	{
+	static unsigned long tiempo_inicial=0;
+	tiempo=(millis()/1000);
+	if(millis() - tiempo_inicial<tpo_energizado) return;
+	tiempo_inicial=millis();
+	tx_tiempo=true;
+	
    /* if(tiempo=30){
-      tx_tpo_energizado=true;
-    }*/
-    }
+	  tx_tpo_energizado=true;
+	}*/
+	}
 
 
 void ActualizaSalidas(void)
-    {
-    if(reflector)  ENCENDER_REFLECTOR;
-    else          APAGAR_REFLECTOR;
-    }
+	{
+	if(reflector)  ENCENDER_REFLECTOR;
+	else          APAGAR_REFLECTOR;
+	}
 
 void TransmisionPorSerie(void)
-    {
-    if(tx_temporizador)
-        {
-        tx_temporizador=0;
-        Serial.print("El valor de la variable temporizador es: ");
-        Serial.println(temporizador);
-        }
-    if(tx_encendidos)
-        {
-        tx_encendidos=0;
-        Serial.print("El valor de la variable encendidos es: ");
-        Serial.println(encendidos);
-        }
-    if(tx_tpo_marcha)
-        {
-        tx_tpo_marcha=0;
-        Serial.print("El valor de la variable tpo_marcha es: ");
-        Serial.println(tpo_marcha);
-        }
-    if(tx_tpo_energizado)
-        {
-         tx_tpo_energizado=0;
-         Serial.print("El valor de la variable tpo_energizado es: ");
-         Serial.println(tpo_energizado);
-        }
-    if(tx_tiempo)
-        {
-          tx_tiempo=0;
-          Serial.print("El programa lleva energizado: ");
-          Serial.print(tiempo);
-          Serial.println(" segundos");
-        }
-    }
+	{
+	if(tx_temporizador)
+		{
+		tx_temporizador=0;
+		Serial.print("El valor de la variable temporizador es: ");
+		Serial.println(temporizador);
+		}
+	if(tx_encendidos)
+		{
+		tx_encendidos=0;
+		Serial.print("El valor de la variable encendidos es: ");
+		Serial.println(encendidos);
+		}
+	if(tx_tpo_marcha)
+		{
+		tx_tpo_marcha=0;
+		Serial.print("El valor de la variable tpo_marcha es: ");
+		Serial.println(tpo_marcha);
+		}
+	if(tx_tpo_energizado)
+		{
+		 tx_tpo_energizado=0;
+		 Serial.print("El valor de la variable tpo_energizado es: ");
+		 Serial.println(tpo_energizado);
+		}
+	if(tx_tiempo)
+		{
+		  tx_tiempo=0;
+		  Serial.print("El programa lleva energizado: ");
+		  Serial.print(tiempo);
+		  Serial.println(" segundos");
+		}
+	}
 
 void RecibirPorSerie(void)
-    {
-    if(!Serial.available())return;
-    char dato=Serial.read();
-    switch(dato)
-        {
-        case 'T':
-            tx_temporizador=true;
-            break;
-        case 't':
-            {
-            String cadena=Serial.readString();
-            if(cadena.length())
-                temporizador=cadena.toInt();
-            tx_temporizador=true;
-            break;
-            }
-        case 'E':
-            tx_encendidos=1;
-            break;
-        case 'e':
-            {
-            String str=Serial.readString();
-            encendidos=str.toInt();
-            tx_encendidos=1;
-            break;
-            }
-        case 'M':
-            tx_tpo_marcha=1;
-            break;
-        case 'm':
-            tpo_marcha=0;
-            tx_tpo_marcha=1;
-            break;
-        case 'p':
-            tx_tpo_energizado=true;
-            break;
-        case 'P':
-            {
-            String cadena=Serial.readString();
-            if(cadena.length())
-                tpo_energizado=cadena.toInt();
-            tx_tpo_energizado=true;
-            break;
-            }
-        default:
-            break;
-        }
-    }
-
+	{
+	if(!Serial.available())return;
+	char dato=Serial.read();
+	switch(dato)
+		{
+		case 'T':
+			tx_temporizador=true;
+			break;
+		case 't':
+			{
+			String cadena=Serial.readString();
+			if(cadena.length())
+				temporizador=cadena.toInt();
+			tx_temporizador=true;
+			break;
+			}
+		case 'E':
+			tx_encendidos=1;
+			break;
+		case 'e':
+			{
+			String str=Serial.readString();
+			encendidos=str.toInt();
+			tx_encendidos=1;
+			break;
+			}
+		case 'M':
+			tx_tpo_marcha=1;
+			break;
+		case 'm':
+			tpo_marcha=0;
+			tx_tpo_marcha=1;
+			break;
+		case 'p':
+			tx_tpo_energizado=true;
+			break;
+		case 'P':
+			{
+			String cadena=Serial.readString();
+			if(cadena.length())
+				tpo_energizado=cadena.toInt();
+			tx_tpo_energizado=true;
+			break;
+			}
+		default:
+			break;
+		}
+	}
 
 void loop(void)
-    {
-    LedTest();
-    ActualizaSalidas();
-    RecibirPorSerie();
-    TransmisionPorSerie();
-    CtrlAutomaticoReflector();  //
-    ContadorDeEncendido();  //Contar la cantidad de veces que se enciende
-    RegistroAcumuladoDeMarcha();
-    TiempoEnergizado();
-    if (SePresionoBoton())
-        InvertirEstadoReflector();
-    }
+	{
+	LedTest();
+	ActualizaSalidas();
+	RecibirPorSerie();
+	TransmisionPorSerie();
+	CtrlAutomaticoReflector();  //
+	ContadorDeEncendido();  //Contar la cantidad de veces que se enciende
+	RegistroAcumuladoDeMarcha();
+	TiempoEnergizado();
+	if (SePresionoBoton())
+		InvertirEstadoReflector();
+	}
