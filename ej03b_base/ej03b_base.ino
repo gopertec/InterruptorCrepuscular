@@ -34,16 +34,16 @@ Se debe apagar de manera temporizada únicamente si se encendió de manera autom
 */
 
 #define PIN_BOTON                               7
-#define CONFIGURAR_BOTON                        pinMode(PIN_BOTON, INPUT)
-#define BOTON_PRESIONADO                        (digitalRead(PIN_BOTON)==HIGH)
+#define CONFIGURAR_BOTON                        pinMode(PIN_BOTON, INPUT_PULLUP)
+#define BOTON_PRESIONADO                        (digitalRead(PIN_BOTON)==LOW)
 
 #define PIN_DETECTA_OSCURIDAD                   8
-#define CONFIGURAR_DETECTA_OSCURIDAD            pinMode(PIN_DETECTA_OSCURIDAD, INPUT)
-#define ESTA_OSCURO                             (digitalRead(PIN_DETECTA_OSCURIDAD)==HIGH)
+#define CONFIGURAR_DETECTA_OSCURIDAD            pinMode(PIN_DETECTA_OSCURIDAD, INPUT_PULLUP)
+#define ESTA_OSCURO                             (digitalRead(PIN_DETECTA_OSCURIDAD)==LOW)
 
 #define PIN_DETECTA_PRESENCIA                   9
-#define CONFIGURAR_DETECTA_PRESENCIA            pinMode(PIN_DETECTA_PRESENCIA, INPUT)
-#define DETECTA_PRESENCIA                       (digitalRead(PIN_DETECTA_PRESENCIA)==HIGH)
+#define CONFIGURAR_DETECTA_PRESENCIA            pinMode(PIN_DETECTA_PRESENCIA, INPUT_PULLUP)
+#define DETECTA_PRESENCIA                       (digitalRead(PIN_DETECTA_PRESENCIA)==LOW)
 
 #define PIN_REFLECTOR                           3
 #define CONFIGURAR_REFLECTOR                    pinMode(PIN_REFLECTOR, OUTPUT)
@@ -83,6 +83,7 @@ void setup(void)
 	CONFIGURAR_DETECTA_PRESENCIA;
 	CONFIGURAR_REFLECTOR;
 	CONFIGURAR_LED_TEST;
+  CONFIGURAR_BOTON;
 
 	APAGAR_REFLECTOR;
 	APAGAR_LED_TEST;
