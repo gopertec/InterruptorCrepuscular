@@ -32,6 +32,7 @@ Se debe apagar de manera temporizada únicamente si se encendió de manera autom
 - Guardar en la memoria no volatil, los valores registrados (cantidad de encendidos + tiempo acumulado de funcionamiento)
 - Utilizar INPUT_PULLUP para las entradas (así evitamos la necesidad de resistencias pull up externas)
 */
+#include <EEPROM.h>
 
 #define PIN_BOTON                               7
 #define CONFIGURAR_BOTON                        pinMode(PIN_BOTON, INPUT_PULLUP)
@@ -57,6 +58,9 @@ Se debe apagar de manera temporizada únicamente si se encendió de manera autom
 
 #define ON                                      1
 #define OFF                                     0
+
+#define SALVAR_ENCENDIDOS 10
+#define SALVAR_TIEMPO_MARCHA 11
 
 unsigned char pulsos = 1;
 unsigned long millis_pulso = 200, millis_off = 1000;
@@ -84,7 +88,6 @@ void setup(void)
 	CONFIGURAR_REFLECTOR;
 	CONFIGURAR_LED_TEST;
   CONFIGURAR_BOTON;
-
 	APAGAR_REFLECTOR;
 	APAGAR_LED_TEST;
 	Serial.begin(9600);
@@ -107,18 +110,14 @@ bool SePresionoBoton(void)
 	static bool boton_presionado_ant = LOW;
   static unsigned long int momentoPulsado=0;
   unsigned long int tiempoMuerto = 50;
-  
   if (BOTON_PRESIONADO == boton_presionado_ant)  return (false);
-  
-  
   if(millis()-momentoPulsado>tiempoMuerto){
   boton_presionado_ant = BOTON_PRESIONADO;
   momentoPulsado=millis();
   } else return false;
-  
   return (BOTON_PRESIONADO);
 	}
-
+ 
 void InvertirEstadoReflector(void)  //Nacho
 	{
 	reflector = !reflector;
@@ -134,9 +133,7 @@ void CtrlAutomaticoReflector(void) //Ezequiel
 	*/
 	static bool detecta_presencia_ant=0;
 	static unsigned long millis_inicial = 0;
-
 	if (!ESTA_OSCURO)return; //...está oscuro
-
 	if (DETECTA_PRESENCIA != detecta_presencia_ant) ///////// mientras haya movimiento la luz va a estar prendida, cuando deja de detectar presencia empieza el conteo
 		{
 		detecta_presencia_ant=DETECTA_PRESENCIA;
@@ -149,6 +146,12 @@ void CtrlAutomaticoReflector(void) //Ezequiel
 	if (millis() - millis_inicial > temporizador)
 		reflector = 0;
 	}
+void Guardar2(int dato){ //RANZ
+  if(dato==SALVAR_ENCENDIDOS) EEPROM.write(0,encendidos);
+  else if(dato==SALVAR_TIEMPO_MARCHA) EEPROM.write(1,tpo_marcha);
+  else return;
+  } 
+
 
 void ContadorDeEncendido(void)  //Matias
 	{
