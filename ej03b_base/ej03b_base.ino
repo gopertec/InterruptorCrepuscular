@@ -1,3 +1,5 @@
+#include <EEPROM.h>
+
 /*
 ITES - Instituto Tecnológico de Educación Superior
 Tecnicatura Superior en Desarrollo de Software
@@ -33,6 +35,8 @@ Se debe apagar de manera temporizada únicamente si se encendió de manera autom
 - Utilizar INPUT_PULLUP para las entradas (así evitamos la necesidad de resistencias pull up externas)
 */
 #include <EEPROM.h>
+
+
 
 #define PIN_BOTON                               7
 #define CONFIGURAR_BOTON                        pinMode(PIN_BOTON, INPUT_PULLUP)
@@ -79,7 +83,10 @@ bool tx_tpo_energizado=true;
 bool tx_tiempo=false;
 unsigned long tiempo=0;
 
-
+byte eeEncendidos=0;
+int dirEncendidos=0;
+byte eeMarcha;
+int dirTpoMarcha=1;
 
 void setup(void)
 	{
@@ -91,6 +98,10 @@ void setup(void)
 	APAGAR_REFLECTOR;
 	APAGAR_LED_TEST;
 	Serial.begin(9600);
+  EEPROM.get(dirEncendidos, eeEncendidos);
+  encendidos=eeEncendidos;
+  EEPROM.get(dirTpoMarcha, eeMarcha);
+  tpo_marcha=eeMarcha;
 	}
 
 void LedTest(void)  //Matias y Enrique
@@ -161,13 +172,19 @@ void ContadorDeEncendido(void)  //Matias
 	if(reflector)
 		{
 		encendidos++;
+    Guardar(dirEncendidos, encendidos);
+   /*eeEncendidos=encendidos;
+   EEPROM.update(dirEncendidos, eeEncendidos);*/
 		}
 	}
 
 void RegistroAcumuladoDeMarcha(void) //ahi modifique la funcion, ahora respeta el tiempo que esta prendido //Ezequiel
 	{
 	static unsigned long tiempo_inicial=0;
-	if(reflector==0) return;
+	if(reflector==0){
+	  Guardar(dirTpoMarcha, tpo_marcha);
+	  return;
+	}
 	if (millis() - tiempo_inicial > 1000)
 		{
 		tpo_marcha ++;
@@ -279,6 +296,11 @@ void RecibirPorSerie(void)
 			break;
 		}
 	}
+
+void Guardar(int direccion, byte dato)
+  {
+    EEPROM.update(direccion, dato);
+  }
 
 void loop(void)
 	{
