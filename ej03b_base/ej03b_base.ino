@@ -36,8 +36,6 @@ Se debe apagar de manera temporizada únicamente si se encendió de manera autom
 */
 #include <EEPROM.h>
 
-
-
 #define PIN_BOTON                               7
 #define CONFIGURAR_BOTON                        pinMode(PIN_BOTON, INPUT_PULLUP)
 #define BOTON_PRESIONADO                        (digitalRead(PIN_BOTON)==LOW)
@@ -83,10 +81,7 @@ bool tx_tpo_energizado=true;
 bool tx_tiempo=false;
 unsigned long tiempo=0;
 
-byte eeEncendidos=0;
-int dirEncendidos=0;
-byte eeMarcha;
-int dirTpoMarcha=1;
+
 
 void setup(void)
 	{
@@ -98,10 +93,6 @@ void setup(void)
 	APAGAR_REFLECTOR;
 	APAGAR_LED_TEST;
 	Serial.begin(9600);
-  EEPROM.get(dirEncendidos, eeEncendidos);
-  encendidos=eeEncendidos;
-  EEPROM.get(dirTpoMarcha, eeMarcha);
-  tpo_marcha=eeMarcha;
 	}
 
 void LedTest(void)  //Matias y Enrique
@@ -128,7 +119,7 @@ bool SePresionoBoton(void)
   } else return false;
   return (BOTON_PRESIONADO);
 	}
- 
+
 void InvertirEstadoReflector(void)  //Nacho
 	{
 	reflector = !reflector;
@@ -158,12 +149,12 @@ void CtrlAutomaticoReflector(void) //Ezequiel
 		reflector = 0;
 	}
 
-/* 
+/*
 void Guardar2(int dato){ //RANZ
   if(dato==SALVAR_ENCENDIDOS) EEPROM.write(0,encendidos);
   else if(dato==SALVAR_TIEMPO_MARCHA) EEPROM.write(1,tpo_marcha);
   else return;
-  } 
+  }
 */
 
 void ContadorDeEncendido(void)  //Matias
@@ -175,8 +166,6 @@ void ContadorDeEncendido(void)  //Matias
 		{
 		encendidos++;
     Guardar(SALVAR_ENCENDIDOS);
-   /*eeEncendidos=encendidos;
-   EEPROM.update(dirEncendidos, eeEncendidos);*/
 		}
 	}
 
@@ -198,7 +187,7 @@ void TiempoEnergizado(void)
 	if(millis() - tiempo_inicial<tpo_energizado) return;
 	tiempo_inicial=millis();
 	tx_tiempo=true;
-	
+
    /* if(tiempo=30){
 	  tx_tpo_energizado=true;
 	}*/
@@ -310,7 +299,7 @@ void Guardar(int valor)
 
       default: break;
     }
-    
+
   }
 
   void DetectarApagado()
@@ -319,7 +308,7 @@ void Guardar(int valor)
     if(reflector!=estado_anterior){
       estado_anterior=reflector;
       if(reflector==0){
-        Guardar(SALVAR_TIEMPO_MARCHA);  
+        Guardar(SALVAR_TIEMPO_MARCHA);
       }
     }
   }
