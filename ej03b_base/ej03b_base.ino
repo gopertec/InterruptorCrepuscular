@@ -1,4 +1,4 @@
-#include <EEPROM.h>
+
 
 /*
 ITES - Instituto Tecnológico de Educación Superior
@@ -157,12 +157,14 @@ void CtrlAutomaticoReflector(void) //Ezequiel
 	if (millis() - millis_inicial > temporizador)
 		reflector = 0;
 	}
+
+/* 
 void Guardar2(int dato){ //RANZ
   if(dato==SALVAR_ENCENDIDOS) EEPROM.write(0,encendidos);
   else if(dato==SALVAR_TIEMPO_MARCHA) EEPROM.write(1,tpo_marcha);
   else return;
   } 
-
+*/
 
 void ContadorDeEncendido(void)  //Matias
 	{
@@ -172,7 +174,7 @@ void ContadorDeEncendido(void)  //Matias
 	if(reflector)
 		{
 		encendidos++;
-    Guardar(dirEncendidos, encendidos);
+    Guardar(SALVAR_ENCENDIDOS);
    /*eeEncendidos=encendidos;
    EEPROM.update(dirEncendidos, eeEncendidos);*/
 		}
@@ -181,10 +183,7 @@ void ContadorDeEncendido(void)  //Matias
 void RegistroAcumuladoDeMarcha(void) //ahi modifique la funcion, ahora respeta el tiempo que esta prendido //Ezequiel
 	{
 	static unsigned long tiempo_inicial=0;
-	if(reflector==0){
-	  Guardar(dirTpoMarcha, tpo_marcha);
-	  return;
-	}
+	if(reflector==0) return;
 	if (millis() - tiempo_inicial > 1000)
 		{
 		tpo_marcha ++;
@@ -297,9 +296,32 @@ void RecibirPorSerie(void)
 		}
 	}
 
-void Guardar(int direccion, byte dato)
+void Guardar(int valor)
   {
-    EEPROM.update(direccion, dato);
+    switch (valor)
+    {
+      case SALVAR_ENCENDIDOS:
+        EEPROM.update(dirEncendidos, encendidos);
+        break;
+
+      case SALVAR_TIEMPO_MARCHA:
+        EEPROM.update(dirTpoMarcha, tpo_marcha);
+        break;
+
+      default: break;
+    }
+    
+  }
+
+  void DetectarApagado()
+  {
+    static bool estado_anterior=0;
+    if(reflector!=estado_anterior){
+      estado_anterior=reflector;
+      if(reflector==0){
+        Guardar(SALVAR_TIEMPO_MARCHA);  
+      }
+    }
   }
 
 void loop(void)
@@ -311,6 +333,7 @@ void loop(void)
 	CtrlAutomaticoReflector();  //
 	ContadorDeEncendido();  //Contar la cantidad de veces que se enciende
 	RegistroAcumuladoDeMarcha();
+  DetectarApagado();
 	TiempoEnergizado();
 	if (SePresionoBoton())
 		InvertirEstadoReflector();
