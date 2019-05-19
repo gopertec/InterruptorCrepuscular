@@ -72,6 +72,8 @@ bool reflector = 0;  //el reflector se enciende/apaga según esta variable
 bool encendido_manual=0;
 
 unsigned int encendidos=0;
+byte dirEncendidos = 0;
+byte dirTpoMarcha = 1;
 bool tx_temporizador=true;
 bool tx_encendidos=true;
 bool tx_tpo_marcha=false;
